@@ -8,6 +8,7 @@ import {
   StyleSheet,
   SafeAreaView,
   StatusBar,
+  Platform,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -177,7 +178,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   submitBtn: {
-    backgroundColor: "green",
+    backgroundColor: Platform.OS === "android" ? "green" : "blue",
     padding: 10,
     borderRadius: 10,
     alignItems: "center",

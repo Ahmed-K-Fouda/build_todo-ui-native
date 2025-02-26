@@ -7,10 +7,13 @@ import {
   Platform,
 } from "react-native";
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { addTask } from "../redux/todoSlice";
 
-export default function Inputs({ setTodo }) {
+export default function Inputs() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const dispatch = useDispatch();
 
   function handleAddTask() {
     if (!title.trim() || !description.trim()) {
@@ -18,10 +21,11 @@ export default function Inputs({ setTodo }) {
       return;
     }
     const newTask = { id: Date.now(), title, description, done: false };
-    setTodo((prev) => [...prev, newTask]);
+    dispatch(addTask(newTask));
     setTitle("");
     setDescription("");
   }
+
   return (
     <View>
       <Text style={styles.appHeader}>Todo App</Text>

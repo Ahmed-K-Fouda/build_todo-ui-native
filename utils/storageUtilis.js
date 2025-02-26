@@ -8,13 +8,12 @@ export const saveData = async (key, data) => {
   }
 };
 
-export const loadData = async (key, setData) => {
+export const loadData = async (key) => {
   try {
     const storedData = await AsyncStorage.getItem(key);
-    if (storedData) {
-      setData(JSON.parse(storedData));
-    }
+    return storedData ? JSON.parse(storedData) : null;
   } catch (error) {
     console.error("Error loading data", error);
+    return null;
   }
 };

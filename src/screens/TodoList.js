@@ -11,26 +11,26 @@ import Inputs from "./Inputs";
 import TodoItems from "./TodoItems";
 import FilterButtons from "./FilterButtons";
 import { loadData, saveData } from "../../utils/storageUtilis";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  removeTask,
+  setFilter,
+  setTasks,
+  toggleDone,
+} from "../redux/todoSlice";
 
 function TodoList({ navigation }) {
-  const [todo, setTodo] = useState([]);
-
-  const [filterType, setFilterType] = useState("All");
-
-  function handleRemoveTask(id) {
-    setTodo((prev) => prev.filter((el) => el.id !== id));
-  }
-
-  function handleDone(id) {
-    setTodo((prev) =>
-      prev.map((task) =>
-        task.id === id ? { ...task, done: !task.done } : task
-      )
-    );
-  }
+  const dispatch = useDispatch();
+  const { todo, filterType } = useSelector((state) => state.todo);
 
   useEffect(() => {
-    loadData("todo", setTodo);
+    const fetchData = async () => {
+      const storedTasks = await loadData("todo");
+      if (storedTasks) {
+        dispatch(setTasks(storedTasks));
+      }
+    };
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -51,25 +51,21 @@ function TodoList({ navigation }) {
       />
       <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
       <View style={styles.container}>
-        {/* componenet */}
-        <Inputs setTodo={setTodo} />
+        <Inputs />
         {todo.length > 0 && (
-          // {/* componenet */}
           <FilterButtons
             filterType={filterType}
-            setFilterType={setFilterType}
+            setFilterType={(type) => dispatch(setFilter(type))}
           />
         )}
-
         <FlatList
           data={filteredTasks}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
-            // Component
             <TodoItems
               item={item}
-              handleDone={handleDone}
-              handleRemoveTask={handleRemoveTask}
+              handleDone={() => dispatch(toggleDone(item.id))}
+              handleRemoveTask={() => dispatch(removeTask(item.id))}
               navigation={navigation}
             />
           )}
